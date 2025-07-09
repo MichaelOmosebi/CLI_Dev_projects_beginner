@@ -254,6 +254,7 @@ def total():
     global product1_1_value, product2_1_value, product3_1_value, product4_1_value, product5_1_value, product6_1_value, product7_1_value, product8_1_value
     global product1_2_value, product2_2_value, product3_2_value, product4_2_value, product5_2_value, product6_2_value, product7_2_value, product8_2_value
     global product1_3_value, product2_3_value, product3_3_value, product4_3_value, product5_3_value, product6_3_value, product7_3_value, product8_3_value
+    global total_tax, total_items_cost, discount, delivery_cost, total_bill
 
     # section 1 total cost - Drinks
     product1_1_value = int(product1_1_entry.get()) * 10
@@ -305,18 +306,113 @@ def total():
     global snacks_tax
     snacks_tax = snacks_total * 0.07
 
-    # Display taxes
-    cosmeticstaxEntry.delete(0, END)
-    cosmeticstaxEntry.insert(0, f"R {cosmeticstax}")
-      # Update grocery tax 
+    # calculate total tax
+    total_tax = drinks_tax + fruits_tax + snacks_tax
 
-    grocerytaxEntry.delete(0, END)
-    grocerytaxEntry.insert(0, f"R {grocerytax}")
-      # Update cold drink tax
+    # calculate total products cost
+    total_items_cost = drinks_total + fruits_total + snacks_total
 
-    coldrinktaxEntry.delete(0, END)
-    coldrinktaxEntry.insert(0, f"R {coldrinktax}")
+    # calculate discount
+    discount = total_items_cost * 0.05
 
+    # calculate delivery cost
+    delivery_cost = total_items_cost * 0.04
+
+    # update items cost
+    itemsCost_Entry.delete(0, END)
+    itemsCost_Entry.insert(0, f"₦ {total_items_cost}")
+    
+    # Update discount entry 
+    discount_Entry.delete(0, END)
+    discount_Entry.insert(0, f"₦ {discount}")
+      
+    # Update tax entry
+    tax_Entry.delete(0, END)
+    tax_Entry.insert(0, f"₦ {total_tax}")
+
+    # update delivery cost
+    deliveryCost_Entry.delete(0, END)
+    deliveryCost_Entry.insert(0, f"₦ {delivery_cost}")
+
+    total_bill = total_items_cost + total_tax + delivery_cost
+
+
+
+def bill_area():
+    if customernameEntry.get() == "" or shopperPhone_Entry.get() == "" or shopperMailEntry.get() == "":
+        messagebox.showerror("Error", "Customer details are required")
+        return
+
+    if (itemsCost_Entry.get() == ""):
+        messagebox.showerror("Error", "No product selected")
+        return
+
+    now = dt.datetime.now()
+    date_str = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    textarea.delete(1.0, END)
+    textarea.insert(END, f"{'Welcome ' + customernameEntry.get():^85}\n")
+    textarea.insert(END, f"{'Date: ' + date_str:^85}\n")
+    textarea.insert(END, "-" * 85 + "\n")
+    textarea.insert(END, f"Bill Number: {billnumber}\n")
+    textarea.insert(END, f"Customer Name: {customernameEntry.get()}\n")
+    textarea.insert(END, f"Phone Number: {shopperPhone_Entry.get()}\n")
+    textarea.insert(END, "-" * 85 + "\n")
+    textarea.insert(END, f"{'Product':<50}{'Qty':>10}{'Price':>25}\n")
+    textarea.insert(END, "-" * 85 + "\n")
+
+    # Products and their entries
+    items = [('Coca Cola', product1_1_entry, 500),
+    ('Fanta', product2_1_entry, 490),
+    ('Pepsi', product3_1_entry, 450),
+    ('Mountain Dew', product4_1_entry, 510),
+    ('Sprite', product5_1_entry, 460),
+    ("'Dúdú", product6_1_entry, 400),
+    ('Zobo', product7_1_entry, 350),
+    ('Tigernut Drink', product8_1_entry, 1500),
+    ('Apples', product1_2_entry, 600),
+    ('Apricots', product2_2_entry, 700),
+    ('Avocados', product3_2_entry, 650),
+    ('Water Melon', product4_2_entry, 1900),
+    ('Oranges', product5_2_entry, 120),
+    ('Bananas', product6_2_entry, 670),
+    ('Pineapples', product7_2_entry, 790),
+    ('Carrots', product8_2_entry, 530),
+    ('Crackers', product1_3_entry, 1600),
+    ('Kúlí Kúlí', product2_3_entry, 1200),
+    ('Pop Corn', product3_3_entry, 500),
+    ('Short Bread', product4_3_entry, 2500),
+    (' Wafers', product5_3_entry, 1100),
+    ('Chin-chin', product6_3_entry, 1200),
+    ('Peanut', product7_3_entry, 1400),
+    ('Pringles', product8_3_entry, 2600)
+    ]
+
+    for name, entry, unit_price in items:
+        qty = int(entry.get())
+        if qty > 0:
+            total_product_price = qty * unit_price
+            textarea.insert(END, f"{name:50}{qty:>10}{('₦ ' + str(total_product_price)):>25}\n")
+
+    textarea.insert(END, "-" * 85 + "\n")
+
+    # total = (
+    #     bathvalue + facecreamvalue + facewashvalue + hairsprayvalue +
+    #     hairgelvalue + bodylotionvalue + ricevalue + daalvalue +
+    #     oilvalue + wheatvalue + sugarvalue + cokevalue + pepsivalue +
+    #     spritevalue + fantavalue + lemontwistvalue
+    # )
+
+    # # Tax and totals
+    # total_tax = cosmeticstax + grocerytax + coldrinktax
+    # totalbill = total + total_tax
+
+    textarea.insert(END, f"{'Total Price:':<60}{'₦ ' + format(total_items_cost, '.2f'):>25}\n")
+    textarea.insert(END, f"{'Total Tax:':<60}{'₦ ' + format(total_tax, '.2f'):>25}\n")
+    textarea.insert(END, f"{'Total Bill + Tax:':<60}{'₦ ' + format(total_bill, '.2f'):>25}\n")
+    textarea.insert(END, "-" * 85 + "\n")
+
+    save_bill()
 
 #--------------------------------------------------------------------------------------------------------------------------------
 #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -536,7 +632,7 @@ product3_3_entry = tk.Entry(productSection3_label, font=('arial', 10), width=5, 
 product3_3_entry.grid(row=2, column=1, padx=10, pady=8)
 
 # 3.3.4 Create a Label and entry field for the fourth product in section 3
-product4_3_label = tk.Label(productSection3_label, text='Crackers ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
+product4_3_label = tk.Label(productSection3_label, text='Short Bread ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
 product4_3_label.grid(row=3, column=0, padx=6, pady=4, sticky='w')
 product4_3_entry = tk.Entry(productSection3_label, font=('arial', 10), width=5, bd=5)
 product4_3_entry.grid(row=3, column=1, padx=10, pady=8)
@@ -565,39 +661,6 @@ product8_3_label.grid(row=7, column=0, padx=6, pady=4, sticky='w')
 product8_3_entry = tk.Entry(productSection3_label, font=('arial', 10), width=5, bd=5)
 product8_3_entry.grid(row=7, column=1, padx=10, pady=8)
 
-# # 3.4.1 Create a Label for the fourth product section
-# productSection4_label = tk.LabelFrame(productionSection_frame, text='House Keeping', font=('times new roman', 13, 'bold'), width=15, bd=7, relief='groove')
-# productSection4_label.grid(row=0, column=3, padx=6, pady=2, columnspan=2, sticky='n')
-
-# # 3.4.2 Create a Label and entry field for the first product in section 4
-# product1_4_label = tk.Label(productSection4_label, text='Mop Bucket: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
-# product1_4_label.grid(row=1, column=0, padx=6, pady=4, sticky='w')
-# product1_4_entry = tk.Entry(productSection4_label, font=('arial', 10), width=5, bd=5)
-# product1_4_entry.grid(row=1, column=1, padx=10, pady=8)
-
-# # 3.4.3 Create a Label and entry field for the second product in section 4
-# product2_4_label = tk.Label(productSection4_label, text='Mop Stick: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
-# product2_4_label.grid(row=2, column=0, padx=6, pady=4, sticky='w')
-# product2_4_entry = tk.Entry(productSection4_label, font=('arial', 10), width=5, bd=5)
-# product2_4_entry.grid(row=2, column=1, padx=10, pady=8)
-
-# # 3.4.4 Create a Label and entry field for the third product in section 4
-# product3_4_label = tk.Label(productSection4_label, text='Brooms: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
-# product3_4_label.grid(row=3, column=0, padx=6, pady=4, sticky='w')
-# product3_4_entry = tk.Entry(productSection4_label, font=('arial', 10), width=5, bd=5)
-# product3_4_entry.grid(row=3, column=1, padx=10, pady=8)
-
-# # 3.4.5 Create a Label and entry field for the fourth product in section 4
-# product4_4_label = tk.Label(productSection4_label, text='Detergent: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
-# product4_4_label.grid(row=4, column=0, padx=6, pady=4, sticky='w')
-# product4_4_entry = tk.Entry(productSection4_label, font=('arial', 10), width=5, bd=5)
-# product4_4_entry.grid(row=4, column=1, padx=10, pady=8)
-
-# # 3.4.6 Create a Label and entry field for the fifth product in section 4
-# product5_4_label = tk.Label(productSection4_label, text='Antiseptic: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
-# product5_4_label.grid(row=5, column=0, padx=6, pady=4, sticky='w')
-# product5_4_entry = tk.Entry(productSection4_label, font=('arial', 10), width=5, bd=5)
-# product5_4_entry.grid(row=5, column=1, padx=10, pady=8)
 
 # 4.0 Create a Frame that houses the text frame which shows the progress text
 shoppingCart_frame = tk.Frame(shoppingDetails, bd=8, relief='groove', width=35, background='gray30')
@@ -673,35 +736,23 @@ checkoutActions = tk.Frame(buttonsDescription, bd=8, relief='sunken', width=35, 
 checkoutActions.grid(row=0, column=4, columnspan=4, rowspan=2, padx=6, pady=2)
 
 # 6.2.1 Add buttons to checkout actions frame
-btn_total = tk.Button(checkoutActions, text='Total', font=('arial', 12, 'bold'), command=lambda: print("Total"), width=10)
+btn_total = tk.Button(checkoutActions, text='Total', font=('arial', 12, 'bold'), command = total, width=10)
 btn_total.grid(row=0, column=0, padx=13, pady=9)
 
-btn_bill = tk.Button(checkoutActions, text='Bill', font=('arial', 12, 'bold'), command=lambda: print("Bill"), width=10)
+btn_bill = tk.Button(checkoutActions, text='Bill', font=('arial', 12, 'bold'), command = bill_area, width=10)
 btn_bill.grid(row=0, column=1, padx=13, pady=9)
 
 btn_email = tk.Button(checkoutActions, text='Email', font=('arial', 12, 'bold'), command = send_email, width=10)
 btn_email.grid(row=0, column=2, padx=13, pady=9)
 
-btn_print = tk.Button(checkoutActions, text='Print', font=('arial', 12, 'bold'), command=lambda: print("Print"), width=10)
+btn_print = tk.Button(checkoutActions, text='Print', font=('arial', 12, 'bold'), command = print_bill, width=10)
 btn_print.grid(row=0, column=3, padx=13, pady=9)
 
 btn_clear = tk.Button(checkoutActions, text='Clear', font=('arial', 12, 'bold'), command = clear, width=10)
 btn_clear.grid(row=0, column=4, padx=13, pady=9)
 
-
-# =========================================================================================///
-# Buttons = Items cost, Discount, Tax, Delivery Cost, Total Cost, Bill, Email, Print, Clear.
-# =========================================================================================\\\
-
-
-# # Insert buttons in the 
-# btn2 = tk.Button(root, text="<<<<<<<<<< RUN SESSION >>>>>>>>>>",
-#                  font=('arial', '12', 'bold'), command=lambda: threading.Thread(target=run_session).start()) #threading.Thread(target=run_session).start
-# btn2.grid(row=5, pady=12, column=0, columnspan=4)
-
-# 4.1.5 Configure scrollbar to respond to textarea vertical view/action
 scrollbar.config(command=textarea.yview)
 
-
+clear()
 
 root.mainloop()

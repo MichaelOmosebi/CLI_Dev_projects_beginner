@@ -3,7 +3,7 @@ import time
 import requests
 import json
 import ast
-import csv, os
+import csv, os, random,tempfile, smtplib
 import pandas as pd
 import threading
 import datetime as dt
@@ -24,6 +24,307 @@ from ttkbootstrap.constants import *
 # >>>>>>>
 # >>>>>>>
 # >>>>>>>
+
+
+#--------------------------------------------------------------------------------------------------------------------------------
+#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# DECLARING APP FUNCTIONALITIES
+#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+#--------------------------------------------------------------------------------------------------------------------------------
+
+
+billnumber = random.randint(1000, 9999)  #   Generate a random bill numberd
+
+# clear button:
+# l function
+
+def clear():
+    # iterate through each of 8 products in the 3 sections and replace the current value with "0"
+    # 3 sections with 8 products each
+    for s in list(range(1,4,1)):
+        
+        product1_1_entry.delete(0, END)
+        product1_1_entry.insert(0, "0")
+
+        product2_1_entry.delete(0, END)
+        product2_1_entry.insert(0, "0")
+
+        product3_1_entry.delete(0, END)
+        product3_1_entry.insert(0, "0")
+
+        product4_1_entry.delete(0, END)
+        product4_1_entry.insert(0, "0")
+
+        product5_1_entry.delete(0, END)
+        product5_1_entry.insert(0, "0")
+
+        product6_1_entry.delete(0, END)
+        product6_1_entry.insert(0, "0")
+
+        product7_1_entry.delete(0, END)
+        product7_1_entry.insert(0, "0")
+
+        product8_1_entry.delete(0, END)
+        product8_1_entry.insert(0, "0")
+
+        # Section 2 - Fruits
+        product1_2_entry.delete(0, END)
+        product1_2_entry.insert(0, "0")
+
+        product2_2_entry.delete(0, END)
+        product2_2_entry.insert(0, "0")
+
+        product3_2_entry.delete(0, END)
+        product3_2_entry.insert(0, "0")
+
+        product4_2_entry.delete(0, END)
+        product4_2_entry.insert(0, "0")
+
+        product5_2_entry.delete(0, END)
+        product5_2_entry.insert(0, "0")
+
+        product6_2_entry.delete(0, END)
+        product6_2_entry.insert(0, "0")
+
+        product7_2_entry.delete(0, END)
+        product7_2_entry.insert(0, "0")
+
+        product8_2_entry.delete(0, END)
+        product8_2_entry.insert(0, "0")
+        
+        # Section 3 - Snacks
+        product1_3_entry.delete(0, END)
+        product1_3_entry.insert(0, "0")
+
+        product2_3_entry.delete(0, END)
+        product2_3_entry.insert(0, "0")
+
+        product3_3_entry.delete(0, END)
+        product3_3_entry.insert(0, "0")
+
+        product4_3_entry.delete(0, END)
+        product4_3_entry.insert(0, "0")
+
+        product5_3_entry.delete(0, END)
+        product5_3_entry.insert(0, "0")
+
+        product6_3_entry.delete(0, END)
+        product6_3_entry.insert(0, "0")
+
+        product7_3_entry.delete(0, END)
+        product7_3_entry.insert(0, "0")
+
+        product8_3_entry.delete(0, END)
+        product8_3_entry.insert(0, "0")
+        
+
+        # Price, Discount and Tax fields
+        itemsCost_Entry.delete(0, END)
+        discount_Entry.delete(0, END)
+        tax_Entry.delete(0, END)
+        deliveryCost_Entry.delete(0, END)
+
+        # Customer details
+        customernameEntry.delete(0, END)
+        shopperPhone_Entry.delete(0, END)
+        shopperMailEntry.delete(0, END)
+        ticketSearch_Entry.delete(0, END)
+
+        # Bill area
+        textarea.delete(1.0, END)
+
+
+def send_email():
+
+    def send_gmail():
+       try:
+           ob = smtplib.SMTP('smtp.gmail.com',587)
+           ob.starttls()
+           ob.login(senderEntry.get(), passwordrEntry.get())
+           message = email_textarea.get(1.0,END)
+           ob.sendmail(senderEntry.get(), recieverEntry.get(),message)
+           ob.quit()
+           messagebox.showinfo('Success', 'Bill is successful', parent=root1)
+           root1.destroy()
+
+       except:
+           messagebox.showerror('Error', "Something went wrong , Please try again", parent =root1)
+
+           
+    if textarea.get(1.0,END)=='\n':
+        messagebox.showerror('Error', 'No Bill Found')
+    else:
+        root1 = tk.Toplevel()
+        root1.grab_set()
+        root1.title('send gmail')
+        root1.config(bg= "lightblue")
+        root1.resizable(0,0)
+        
+
+        senderFrame = tk.LabelFrame(root1,text= 'SENDER',font=('arial', 16, 'bold'),fg= 'white',bg = 'blue',padx=40,pady=20,)
+        senderFrame.grid(row=0, column=0)
+
+
+        senderLable = tk.Label(senderFrame,text ="Sender's Email", font = ('arial', 14, 'bold'),fg= 'white',bg = 'blue',pady=8,padx=10,)
+        senderLable.grid(row =0, column=0)
+
+        senderEntry = tk.Entry(senderFrame,font=('arial',14,'bold'),bd=2,width=23,relief=RIDGE)                  
+        senderEntry.grid(row=0, column=1)
+            
+        passwordLabel = tk.Label(senderFrame,text ="Password",font = ('arial', 14, 'bold'),fg= 'white',bg = 'blue',pady=8,padx=10,)
+        passwordLabel.grid(row =1, column=0)
+
+        passwordrEntry = tk.Entry(senderFrame,font=('arial',14,'bold'),bd=2,width=23,relief=RIDGE,show='*')          
+        passwordrEntry.grid(row=1, column=1)
+
+        # recipinent 
+        recipientFrame= tk.LabelFrame(root1,text= 'RECIPIENT',font=('arial', 16, 'bold'),fg= 'white',bg = 'blue',padx=40,pady=20,)
+        recipientFrame.grid(row=1, column=0, padx =10, pady=20)
+
+        recieverLable = tk.Label(recipientFrame,text ="Email Address",font = ('arial', 14, 'bold'),fg= 'white',bg = 'blue', pady=8, padx=10,)
+        recieverLable.grid(row =0, column=0)
+
+        recieverEntry = tk.Entry(recipientFrame, font=('arial',14,'bold'), bd=2,width=23,relief=RIDGE)
+        recieverEntry.grid(row=0, column=1)
+            
+        messageLabel = tk.Label(recipientFrame,text ='Message',font=('arial',14,'bold'),bg='lightblue',fg="blue")
+        messageLabel.grid(row=1, column=0, padx=10, pady=8)
+            
+        
+        email_textarea = tk.Text(recipientFrame,font=('arial', 14, 'bold'),bd=2,relief=SUNKEN,width=42,height=11)
+        email_textarea.grid(row=2,column=0 , columnspan=2)
+        email_textarea.delete(1.0, END)
+        email_textarea.insert(END,textarea.get(1.0, END).replace('-',""))
+
+        sendButton=tk.Button(root1,text='SEND',font=('arial', 16, 'bold'),command=send_gmail,)
+        sendButton.grid(row=2, column=0, pady=20)
+
+        root1.mainloop()
+
+def print_bill():
+    """Print the bill content from the textarea."""
+    if textarea.get(1.0, END) == "\n":
+        messagebox.showerror("Error", "No bill to print")
+    else:
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode='w', encoding='utf-8') as temp_file:
+                temp_file.write(textarea.get(1.0, END))
+                temp_file_path = temp_file.name
+
+            os.startfile(temp_file_path, "print")
+            messagebox.showinfo("Success", "Bill sent to printer")
+
+        except Exception as e:
+            messagebox.showerror("Print Error", str(e))
+
+
+def search_bill():
+     global billnumber
+     for i in os.listdir('bills'):
+            if i.split('_')[1].split('.')[0] == BillNumberEntry.get():
+              f = open(f'bills/{i}', 'r')
+              textarea.delete(1.0, END)
+              for data in f:
+                   textarea.insert(END, data)
+              f.close()
+              break
+     else:
+            messagebox.showerror("Error", "Bill not found")
+
+
+def save_bill():
+    """Save the bill content to a text file inside the 'bills' folder."""
+    global billnumber
+    result = messagebox.askyesno("Save Bill", "Do you want to save the bill?")
+    if result:
+        # Ensure the 'bills' folder exists
+        if not os.path.exists("bills"):
+            os.makedirs("bills")
+
+        bill_content = textarea.get(1.0, END)
+        filename = f"bills/bill_{billnumber}.txt"
+        with open(filename, "w") as file:
+            file.write(bill_content)
+
+        messagebox.showinfo("Success", f"Bill saved as {filename}")
+        billnumber = random.randint(1000, 9999)  # Reset bill number for next bill
+
+
+def total():
+    global product1_1_value, product2_1_value, product3_1_value, product4_1_value, product5_1_value, product6_1_value, product7_1_value, product8_1_value
+    global product1_2_value, product2_2_value, product3_2_value, product4_2_value, product5_2_value, product6_2_value, product7_2_value, product8_2_value
+    global product1_3_value, product2_3_value, product3_3_value, product4_3_value, product5_3_value, product6_3_value, product7_3_value, product8_3_value
+
+    # section 1 total cost - Drinks
+    product1_1_value = int(product1_1_entry.get()) * 10
+    product2_1_value = int(product2_1_entry.get()) * 25
+    product3_1_value = int(product3_1_entry.get()) * 15
+    product4_1_value = int(product4_1_entry.get()) * 20
+    product5_1_value = int(product5_1_entry.get()) * 20
+    product6_1_value = int(product6_1_entry.get()) * 28
+    product7_1_value = int(product7_1_entry.get()) * 28
+    product8_1_value = int(product8_1_entry.get()) * 28
+    
+    # sum the value of all section 1 items
+    drinks_total = product1_1_value + product2_1_value + product3_1_value + product4_1_value + product5_1_value + product6_1_value + product7_1_value + product8_1_value
+   
+    # fruit.delete(0, END)  # Clear previous entry
+    # cosmeticpriceEntry.insert(0, f"R {totalcosmetic}")
+    
+    # section 2 total cost - Fruits
+    product1_2_value = int(product1_2_entry.get()) * 10
+    product2_2_value = int(product2_2_entry.get()) * 25
+    product3_2_value = int(product3_2_entry.get()) * 15
+    product4_2_value = int(product4_2_entry.get()) * 20
+    product5_2_value = int(product5_2_entry.get()) * 20
+    product6_2_value = int(product6_2_entry.get()) * 28
+    product7_2_value = int(product7_2_entry.get()) * 28
+    product8_2_value = int(product8_2_entry.get()) * 28
+    
+    # sum the value of all section 1 items
+    fruits_total = product1_2_value + product2_2_value + product3_2_value + product4_2_value + product5_2_value + product6_2_value + product7_2_value + product8_2_value
+
+    # section 1 total cost - Snacks
+    product1_3_value = int(product1_3_entry.get()) * 10
+    product2_3_value = int(product2_3_entry.get()) * 25
+    product3_3_value = int(product3_3_entry.get()) * 15
+    product4_3_value = int(product4_3_entry.get()) * 20
+    product5_3_value = int(product5_3_entry.get()) * 20
+    product6_3_value = int(product6_3_entry.get()) * 28
+    product7_3_value = int(product7_3_entry.get()) * 28
+    product8_3_value = int(product8_3_entry.get()) * 28
+    
+    # sum the value of all section 1 items
+    snacks_total = product1_3_value + product2_3_value + product3_3_value + product4_3_value + product5_3_value + product6_3_value + product7_3_value + product8_3_value
+   
+      # Calculate taxes @ 7% Tax
+    global drinks_tax
+    drinks_tax = drinks_total * 0.07
+    global fruits_tax
+    fruits_tax = fruits_total * 0.07
+    global snacks_tax
+    snacks_tax = snacks_total * 0.07
+
+    # Display taxes
+    cosmeticstaxEntry.delete(0, END)
+    cosmeticstaxEntry.insert(0, f"R {cosmeticstax}")
+      # Update grocery tax 
+
+    grocerytaxEntry.delete(0, END)
+    grocerytaxEntry.insert(0, f"R {grocerytax}")
+      # Update cold drink tax
+
+    coldrinktaxEntry.delete(0, END)
+    coldrinktaxEntry.insert(0, f"R {coldrinktax}")
+
+
+#--------------------------------------------------------------------------------------------------------------------------------
+#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# CLOSING APP FUNCTIONALITIES
+#||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+#--------------------------------------------------------------------------------------------------------------------------------
+
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
@@ -60,12 +361,12 @@ customernameEntry = tk.Entry(customer_details_frame, text='', font=('arial', 10)
 customernameEntry.grid(row=0, column=1, pady=9, padx=4, columnspan=1)
 
 # 2.2.0 Create a Label for shopper email
-shopperName_label = tk.Label(customer_details_frame, text='Email: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
-shopperName_label.grid(row=0, column=2, padx=4, pady=2)
+shopperMail_label = tk.Label(customer_details_frame, text='Email: ', font=('times new roman', 12, 'bold'), background='gray30', foreground='white')
+shopperMail_label.grid(row=0, column=2, padx=4, pady=2)
 
 # 2.2.1 Create entry field for shopper email
-shopperNameEntry = tk.Entry(customer_details_frame, font=('arial', 10), width=26, bd=5)
-shopperNameEntry.grid(row=0, column=3, pady=9, padx=6, columnspan=1)
+shopperMailEntry = tk.Entry(customer_details_frame, font=('arial', 10), width=26, bd=5)
+shopperMailEntry.grid(row=0, column=3, pady=9, padx=6, columnspan=1)
 
 # 2.2.2 Create a Label for shopper phone
 shopperPhone_label = tk.Label(customer_details_frame, text='Mobile No.: ', font=('times new roman', 10, 'bold'), background='gray30', foreground='white')
@@ -378,13 +679,13 @@ btn_total.grid(row=0, column=0, padx=13, pady=9)
 btn_bill = tk.Button(checkoutActions, text='Bill', font=('arial', 12, 'bold'), command=lambda: print("Bill"), width=10)
 btn_bill.grid(row=0, column=1, padx=13, pady=9)
 
-btn_email = tk.Button(checkoutActions, text='Email', font=('arial', 12, 'bold'), command=lambda: print("Email"), width=10)
+btn_email = tk.Button(checkoutActions, text='Email', font=('arial', 12, 'bold'), command = send_email, width=10)
 btn_email.grid(row=0, column=2, padx=13, pady=9)
 
 btn_print = tk.Button(checkoutActions, text='Print', font=('arial', 12, 'bold'), command=lambda: print("Print"), width=10)
 btn_print.grid(row=0, column=3, padx=13, pady=9)
 
-btn_clear = tk.Button(checkoutActions, text='Clear', font=('arial', 12, 'bold'), command=lambda: print("Clear"), width=10)
+btn_clear = tk.Button(checkoutActions, text='Clear', font=('arial', 12, 'bold'), command = clear, width=10)
 btn_clear.grid(row=0, column=4, padx=13, pady=9)
 
 
@@ -400,8 +701,6 @@ btn_clear.grid(row=0, column=4, padx=13, pady=9)
 
 # 4.1.5 Configure scrollbar to respond to textarea vertical view/action
 scrollbar.config(command=textarea.yview)
-
-
 
 
 
